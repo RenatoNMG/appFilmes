@@ -1,7 +1,29 @@
-Funcionalidade,Descrição
-Lista de Favoritos,Exibe todos os filmes salvos na sua coleção.
-Adicionar Filme,"Permite inserir manualmente o Título, Ano, Gênero, Direção e Sinopse de um filme."
-Poster Personalizado,"Você pode anexar uma imagem como poster do filme, escolhendo entre a Câmera ou a Galeria do dispositivo."
-Visualização de Detalhes,"Ao tocar em um filme, você acessa a InfoPage (página de informações) para ver todos os detalhes salvos."
-Persistência de Dados,Todos os filmes são salvos localmente no dispositivo usando Shared Preferences.
-Remoção Fácil,Botão de exclusão (ícone de lixeira) ao lado de cada filme para remoção imediata da lista.
+📱 Filmes Hobby – Aplicativo de Catálogo de Filmes
+
+O Filmes Hobby é um aplicativo desenvolvido em Flutter que permite buscar filmes, visualizar detalhes, favoritar, marcar como assistido e muito mais.
+Ele utiliza a API OMDb para exibir informações reais de filmes e faz persistência local com SharedPreferences.
+
+🚀 Funcionalidades
+
+✔️ Buscar filmes pelo nome
+✔️ Exibir filmes por categorias
+✔️ Ver detalhes completos do filme
+✔️ Favoritar filmes
+✔️ Marcar como assistidos
+✔️ Armazenamento local com SharedPreferences
+✔️ Notificação ao deslogar (flutter_local_notifications)
+✔️ Interface simples e intuitiva
+
+🛠️ Tecnologias Utilizadas
+
+Flutter
+
+Dart
+
+OMDb API
+
+SharedPreferences
+
+Flutter Local Notifications
+
+Material Design
