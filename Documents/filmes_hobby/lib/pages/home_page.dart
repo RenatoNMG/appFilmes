@@ -1,6 +1,7 @@
+import 'package:filmes_hobby/auth/login_page.dart';
 import 'package:filmes_hobby/pages/info_page.dart';
 import 'package:filmes_hobby/pages/favorite_page.dart';
-import 'package:filmes_hobby/pages/watched_page.dart'; // Importação da página de assistidos
+import 'package:filmes_hobby/pages/watched_page.dart';
 import 'package:filmes_hobby/service/servide_omdb.dart';
 import 'package:flutter/material.dart';
 
@@ -63,8 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> buscarPorCategoria(String categoria) async {
-    // Note: Usamos '!' pois o valor deve existir no categoriaMap
-    final palavra = categoriaMap[categoria]!; 
+    final palavra = categoriaMap[categoria]!;
 
     setState(() => carregando = true);
 
@@ -76,7 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // Imagem com fallback
   Widget _buildPoster(String? url) {
     if (url == null || url.isEmpty || url == "N/A") {
       return Image.asset(
@@ -109,11 +108,19 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.deepPurple,
-        
         actions: [
-          // ----------------------------------------------------
-          // BOTÃO: JÁ ASSISTIDOS (Usando Icons.visibility)
-          // ----------------------------------------------------
+          // BOTÃO SAIR
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => LoginPage()),
+                (route) => false,
+              );
+            },
+          ),
+
           IconButton(
             icon: const Icon(Icons.visibility, color: Colors.white),
             onPressed: () {
@@ -123,10 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          
-          // ----------------------------------------------------
-          // BOTÃO: FAVORITOS (Usando Icons.favorite)
-          // ----------------------------------------------------
+
           IconButton(
             icon: const Icon(Icons.favorite, color: Colors.white),
             onPressed: () {
@@ -138,12 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Busca
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -158,7 +162,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
             const SizedBox(height: 15),
 
-            // Categorias
             SizedBox(
               height: 40,
               child: ListView(
@@ -193,7 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
             const SizedBox(height: 10),
 
-            // Lista de filmes
             Expanded(
               child: carregando
                   ? const Center(child: CircularProgressIndicator())
@@ -220,12 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   size: 16,
                                 ),
                                 onTap: () async {
-                                  // Primeiro, busca os detalhes completos do filme
                                   final detalhes = await _service.buscarDetalhes(
                                     filme["imdbID"],
                                   );
 
-                                  // Depois, navega para a página de detalhes
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

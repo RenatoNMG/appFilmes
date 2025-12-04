@@ -1,5 +1,4 @@
 import 'package:filmes_hobby/auth/login_page.dart';
-import 'package:filmes_hobby/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {

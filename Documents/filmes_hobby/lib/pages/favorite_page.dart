@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // NOVO
-import 'dart:convert'; // NOVO
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-import 'info_page.dart'; // Para navegação de volta aos detalhes
+import 'info_page.dart';
+import 'add_movie_page.dart'; // Nova página que vamos criar
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -12,9 +13,7 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  // Chave de armazenamento (deve ser a mesma da InfoPage)
   static const String _favoritesKey = 'favoriteMovies'; 
-  
   List<Map<String, dynamic>> _favoriteMovies = [];
   bool _isLoading = true;
   
@@ -26,32 +25,19 @@ class _FavoritePageState extends State<FavoritePage> {
     _loadFavorites();
   }
   
-  // --------------------------
-  // CARREGAR FAVORITOS DO SHARED PREFERENCES
-  // --------------------------
   Future<void> _loadFavorites() async {
-    setState(() => _isLoading = true); // Inicia carregando
-    
+    setState(() => _isLoading = true);
     final prefs = await SharedPreferences.getInstance();
-    
-    // 1. Carrega a lista de JSON strings
     final List<String> favoritesJsonList = prefs.getStringList(_favoritesKey) ?? [];
-    
-    // 2. Converte as JSON strings de volta para Map<String, dynamic>
     final List<Map<String, dynamic>> loadedMovies = favoritesJsonList.map((movieJson) {
       return jsonDecode(movieJson) as Map<String, dynamic>;
     }).toList();
-
-    // 3. Atualiza o estado da UI
     setState(() {
       _favoriteMovies = loadedMovies;
       _isLoading = false;
     });
   }
 
-  // --------------------------
-  // BUILD
-  // --------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +45,24 @@ class _FavoritePageState extends State<FavoritePage> {
         title: const Text("Meus Filmes Favoritos"),
         backgroundColor: Colors.deepPurple,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Navega para a página de adicionar novo filme
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddMoviePage()),
+          );
+          // Recarrega favoritos ao voltar
+          _loadFavorites();
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.deepPurple,
+        tooltip: "Adicionar novo filme",
+      ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) // Mostra carregando
+          ? const Center(child: CircularProgressIndicator())
           : _favoriteMovies.isEmpty
               ? const Center(
-                  // Mensagem se a lista de favoritos estiver vazia
                   child: Padding(
                     padding: EdgeInsets.all(32.0),
                     child: Text(
@@ -77,7 +76,6 @@ class _FavoritePageState extends State<FavoritePage> {
                   itemCount: _favoriteMovies.length,
                   itemBuilder: (context, index) {
                     final filme = _favoriteMovies[index];
-                    
                     bool temPoster =
                         filme["Poster"] != null &&
                         filme["Poster"] != "N/A" &&
@@ -100,28 +98,16 @@ class _FavoritePageState extends State<FavoritePage> {
                                 )
                               : Image.asset(fallback, fit: BoxFit.cover),
                         ),
-                        
-                        title: Text(
-                          filme["Title"] ?? "Filme Sem Título",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          filme["Year"] ?? "Ano não disponível",
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        
+                        title: Text(filme["Title"] ?? "Filme Sem Título",
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(filme["Year"] ?? "Ano não disponível",
+                            style: const TextStyle(color: Colors.grey)),
                         trailing: const Icon(Icons.favorite, color: Colors.red),
-
                         onTap: () async {
-                          // Navega para InfoPage e aguarda o retorno.
                           await Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => InfoPage(filme: filme),
-                            ),
+                            MaterialPageRoute(builder: (context) => InfoPage(filme: filme)),
                           );
-                          // Após retornar da InfoPage (e o usuário talvez remover o favorito), 
-                          // recarrega a lista para refletir o estado atual.
                           _loadFavorites(); 
                         },
                       ),
